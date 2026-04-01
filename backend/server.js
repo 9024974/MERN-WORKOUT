@@ -1,31 +1,29 @@
-// server.js
 import express from 'express';
-import workoutRoutes from './src/routes/workoutRoutes.js';
 import mongoose from 'mongoose';
-
+import cors from 'cors';
+import workoutRoutes from './src/routes/workoutRoutes.js';
+import dotenv from 'dotenv';
+ 
+dotenv.config();
+ 
 const app = express();
-const PORT = process.env.PORT || 4000;
-
-// Middleware
+ 
+// ✅ CORS (HEEL BELANGRIJK)
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
+ 
 app.use(express.json());
-
-// Routes
+ 
+// routes
 app.use('/api/workouts', workoutRoutes);
-
-// Test route
-app.get('/', (req, res) => {
-  res.json({ message: 'Backend draait!' });
-});
-
+ 
+// connect DB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('Verbonden met MongoDB');
-    
-    // Start server ALLEEN als database gelukt is
-    app.listen(PORT, () => {
-      console.log(`Server draait op http://localhost:${PORT}`);
+    app.listen(4000, () => {
+      console.log('Server draait op http://localhost:4000');
     });
   })
-  .catch((error) => {
-    console.error('Database verbinding mislukt:', error.message);
-  });
+  .catch(err => console.log(err));
+ 
