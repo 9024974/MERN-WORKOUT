@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Verbonden met MongoDB');
-
+    
     // Start server ALLEEN als database gelukt is
     app.listen(PORT, () => {
       console.log(`Server draait op http://localhost:${PORT}`);
