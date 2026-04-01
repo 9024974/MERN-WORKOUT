@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import workoutRoutes from './src/routes/workoutRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
 import dotenv from 'dotenv';
  
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json());
  
 // routes
 app.use('/api/workouts', workoutRoutes);
+app.use('/api/auth', authRoutes); // Nieuw!
  
 // connect DB
 mongoose.connect(process.env.MONGO_URI)
@@ -26,4 +28,5 @@ mongoose.connect(process.env.MONGO_URI)
     });
   })
   .catch(err => console.log(err));
+ 
  
