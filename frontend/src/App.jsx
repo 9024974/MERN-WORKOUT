@@ -1,37 +1,45 @@
-import { useEffect, useState } from 'react';
-import WorkoutForm from './components/WorkoutForm';
-import WorkoutList from './components/WorkoutList';
- 
-function App() {
-  const [workouts, setWorkouts] = useState([]);
- 
-  const fetchWorkouts = async () => {
-    try {
-      const res = await fetch('http://localhost:4000/api/workouts');
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const data = await res.json();
-      console.log(data);
-      setWorkouts(data);
-    } catch (error) {
-      console.error('Error fetching workouts:', error);
-      setWorkouts([]); // or handle error state
-    }
-  };
- 
-  useEffect(() => {
+import { useState } from 'react';
+
+function WorkoutForm({ fetchWorkouts }) {
+  const [title, setTitle] = useState('');
+  const [reps, setReps] = useState('');
+  const [load, setLoad] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem('token');
+
+    const workout = {
+      title,
+      reps: Number(reps),
+      load: Number(load)
+    };
+
+    await fetch('http://localhost:4000/api/workouts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(workout)
+    });
+
+    setTitle('');
+    setReps('');
+    setLoad('');
+
     fetchWorkouts();
-  }, []);
- 
+  };
+
   return (
-    <div>
-      <h1>Workout App</h1>
- 
-      <WorkoutForm fetchWorkouts={fetchWorkouts} />
-      <WorkoutList workouts={workouts} fetchWorkouts={fetchWorkouts} />
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Titel" />
+      <input value={reps} onChange={e => setReps(e.target.value)} placeholder="Reps" />
+      <input value={load} onChange={e => setLoad(e.target.value)} placeholder="Load" />
+      <button>Toevoegen</button>
+    </form>
   );
 }
- 
-export default App;
+
+export default WorkoutForm;
